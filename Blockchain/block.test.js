@@ -55,9 +55,9 @@ describe('Block', () => {
             expect(minedBlock.hash).toEqual(cryptoHash(minedBlock.timestamp, minedBlock.nonce, minedBlock.difficulty, lastBlock.hash, data))
         })
     
-        it('sets a `hash` that matches the difficulty criteria',()=>[
-            expect(hexToBinary(minedBlock.hash.substring(0,minedBlock.difficulty))).toEqual('0'.repeat(minedBlock.difficulty))
-        ])
+        it('sets a `hash` that matches the difficulty criteria',()=>{
+            expect(hexToBinary(minedBlock.hash.substring(0,minedBlock.difficulty))).toEqual(hexToBinary('0'.repeat(minedBlock.difficulty)))
+        })
 
         it('adjust the difficulty', ()=>{
             const possibleResults = [lastBlock.difficulty -1, lastBlock.difficulty +1];

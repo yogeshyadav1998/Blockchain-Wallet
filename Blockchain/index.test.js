@@ -2,7 +2,7 @@ const Block = require('./block');
 const Blockchain = require('./index');
 const cryptoHash = require('../utils/cryptoHash');
 
-describe('Blokchain', () =>{
+describe('Blockchain', () =>{
     let  blockchain, newChain, originalChain;
 
     beforeEach(()=>{
@@ -62,7 +62,7 @@ describe('Blokchain', () =>{
 
             describe('the chain contains a block woth jumped difficulty', ()=>{
                 it('returns false', ()=>{
-                    const lastBlock = blockchain.chain[blockchain.chian.length -1];
+                    const lastBlock = blockchain.chain[blockchain.chain.length -1];
                     const lastHash = lastBlock.hash;
                     const timestamp = Date.now();
                     const nonce = 0;
