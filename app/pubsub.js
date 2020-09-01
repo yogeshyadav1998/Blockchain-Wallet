@@ -17,7 +17,7 @@ class PubSub{
         this.subscribeToChannels();
 
         this.subscriber.on('message', (channel,message)=>{
-            console.log('message received. Channel: ' + channel + '. Message : ' + message);
+            this.handleMessage(channel, message);
         })
     }
 
@@ -28,7 +28,11 @@ class PubSub{
 
         switch(channel){
             case CHANNELS.BLOCKCHAIN:
-                this.blockchain.replaceChain(parsedMessage);
+                this.blockchain.replaceChain(parsedMessage, ()=>{
+                    this.transactionPool.clearBlockchainTransactions({
+                        chain: parsedMessage
+                    });
+                });
                 break;
             case CHANNELS.TRANSACTION:
                 this.transactionPool.setTransaction(parsedMessage);
