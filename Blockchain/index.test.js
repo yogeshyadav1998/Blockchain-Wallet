@@ -105,6 +105,7 @@ describe('Blockchain', () =>{
             //     expect(errorMock).toHaveBeenCalled();
             // })
         });
+
         describe('when newChain is longer',()=>{
             beforeEach(()=>{
                 newChain.addBlock({data: "arpit"});
@@ -141,9 +142,21 @@ describe('Blockchain', () =>{
                 // })
             });
         });
+
+        describe('and the `validTransaction` flag is true',()=>{
+            it('calls validTransactionData()',()=>{
+                const validTransactionDataMock = jest.fn();
+
+                blockchain.validTransactionData = validTransactionDataMock;
+
+                blockchain.replaceChain(newChain.chain, true);
+
+                expect(validTransactionDataMock).toHaveBeenCalled();
+            })
+        })
     });
 
-    describe('ValidTransactionData()',()=>{
+    describe('validTransactionData()',()=>{
         let transaction, rewardTransaction, wallet;
 
         beforeEach(()=>{
@@ -164,7 +177,7 @@ describe('Blockchain', () =>{
             it('returns false',()=>{
                 newChain.addBlock({data: [transaction, rewardTransaction, rewardTransaction]});
 
-                expect(blockchain.validTransactionData(newChain.chain)).toBe(false)
+                expect(blockchain.validTransactionData({chain: newChain.chain})).toBe(false)
             });
         });
 
@@ -175,7 +188,7 @@ describe('Blockchain', () =>{
 
                     newChain.addBlock({data: [transaction, rewardTransaction]});
 
-                    expect(blockchain.validTransactionData(newChain.chain)).toBe(false)
+                    expect(blockchain.validTransactionData({chain: newChain.chain})).toBe(false)
                  });
             });
 
@@ -185,20 +198,41 @@ describe('Blockchain', () =>{
 
                     newChain.addBlock({data: [transaction, rewardTransaction]});
                     
-                    expect(blockchain.validTransactionData(newChain.chain)).toBe(false);
+                    expect(blockchain.validTransactionData({chain: newChain.chain})).toBe(false);
                 });
             });
         });
 
         describe('and the transaction data have at least one malformed input',()=>{
             it('return false',()=>{
+                wallet.balance = 10000;
 
+                const evilOutputMap = {
+                    [wallet.publicKey] : 9900,
+                    arpit : 100
+                };
+
+                const evilTransaction = {
+                    input : {
+                        timestamp : Date.now(),
+                        amount : wallet.balance,
+                        address : wallet.publicKey,
+                        signature : wallet.sign(evilOutputMap)
+                    },
+                    outputMap: evilOutputMap
+                }
+
+                newChain.addBlock({data: [evilTransaction, rewardTransaction]});
+
+                expect(blockchain.validTransactionData({chain : newChain.chain})).toBe(false);
             });
         })
 
         describe('and a data contains multiple identical transactions',()=>{
             it('return false',()=>{
+                newChain.addBlock({data: [transaction , transaction, transaction, rewardTransaction]});
 
+                expect(blockchain.validTransactionData({chain : newChain.chain})).toBe(false);
             });
         })
     })
