@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
+const path = require('path');
 const Blockchain = require('./Blockchain/index');
 const PubSub = require('./app/pubsub');
 const TransactionPool = require('./wallet/transaction-pool');
@@ -18,10 +19,15 @@ const DEFAULT_PORT = 3000;
 const ROOT_NODE_ADDRESS = 'http://localhost:'+ DEFAULT_PORT;
 
 app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname,'client/dist')));
+
+app.get('*',(req,res)=>{
+    res.sendFile(path.join(__dirname,'./client/dist/index.html'));
+});
 
 app.get('/api/blocks', (req,res)=>{
     res.json(blockchain.chain)
-})
+});
 
 app.post('/api/mine',(req,res) =>{
     const {data} = req.body;
@@ -31,7 +37,7 @@ app.post('/api/mine',(req,res) =>{
     pubsub.broadcastChain();
     
     res.redirect('/api/blocks');
-})
+});
 
 app.post('/api/transact',(req, res)=>{
     const {amount, recipient} = req.body;
@@ -53,17 +59,17 @@ app.post('/api/transact',(req, res)=>{
     pubsub.broadcastTransaction(transaction);
 
     res.json({type: "sucess", transaction});
-})
+});
 
 app.get('/api/transaction-pool-map',(req, res) =>{
     res.json(transactionPool.transactionMap);
-})
+});
 
 app.get('/api/mine-transactions',(req, res) =>{
     transactionMiner.mineTransactions();
 
     res.redirect('/api/blocks');
-})
+});
 
 app.get('/api/wallet-info',(req, res)=>{
     address = wallet.publicKey;
@@ -72,7 +78,7 @@ app.get('/api/wallet-info',(req, res)=>{
         address,
         balance: Wallet.calculateBalance({chain, address})
     });
-})
+});
 
 const syncWithRootState = () =>{
     request({url: ROOT_NODE_ADDRESS + '/api/blocks'},(error, response, body)=>{
@@ -105,4 +111,4 @@ app.listen(PORT, ()=>{
     if(PORT !== DEFAULT_PORT){
         syncWithRootState();
     }
-})
+});
