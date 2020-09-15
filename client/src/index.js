@@ -1,8 +1,8 @@
 import React from 'react';
-
+import App from './components/App';
 import {render} from 'react-dom';
 
 render(
-    <div>hello cryptochain , i am react. i am again updated</div>,
+    <App/>,
     document.getElementById('root')
 )
