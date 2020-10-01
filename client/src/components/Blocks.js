@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Block from './Block';
+import {Link} from "react-router-dom";
 
 class Blocks extends Component {
 
@@ -8,7 +9,7 @@ class Blocks extends Component {
     };
 
     componentDidMount(){
-        fetch("http://127.0.0.1:3000/api/blocks")
+        fetch("http://localhost:3000/api/blocks")
         .then(response => response.json())
         .then(json => this.setState({blocks : json}))
     };
@@ -16,6 +17,8 @@ class Blocks extends Component {
     render(){
         return(
             <div>
+                <Link to="/"><div>Home</div></Link>
+                <br/>
                <h2>Blocks in Blockchain are </h2>
                {
                     this.state.blocks.map(block =>{

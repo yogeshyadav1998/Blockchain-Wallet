@@ -41,7 +41,10 @@ app.post('/api/mine',(req,res) =>{
 });
 
 app.post('/api/transact',(req, res)=>{
-    const {amount, recipient} = req.body;
+    const { recipient, amountstring} = req.body;
+
+    const amount = parseInt(amountstring);
+    console.log(amount);
 
     let transaction = transactionPool.existingTransaction({inputAddress: wallet.publicKey});
 
@@ -99,43 +102,43 @@ const syncWithRootState = () =>{
     })
 }
 
-const walletFoo = new Wallet();
-const walletBar = new Wallet();
+// const walletFoo = new Wallet();
+// const walletBar = new Wallet();
 
-const generateWalletTransaction = ({wallet, recipient, amount}) =>{
-    const transaction = wallet.createTransaction({
-        recipient, amount, chain: blockchain.chain
-    });
+// const generateWalletTransaction = ({wallet, recipient, amount}) =>{
+//     const transaction = wallet.createTransaction({
+//         recipient, amount, chain: blockchain.chain
+//     });
 
-    transactionPool.setTransaction(transaction);
-}
+//     transactionPool.setTransaction(transaction);
+// }
 
-const walletAction = ()=> generateWalletTransaction({
-    wallet, recipient: walletFoo.publicKey, amount : 5
-});
+// const walletAction = ()=> generateWalletTransaction({
+//     wallet, recipient: walletFoo.publicKey, amount : 5
+// });
 
-const walletFooAction = () => generateWalletTransaction({
-    wallet: walletFoo, recipient: walletBar.publicKey, amount:10
-})
+// const walletFooAction = () => generateWalletTransaction({
+//     wallet: walletFoo, recipient: walletBar.publicKey, amount:10
+// })
 
-const walletBarAction = () => generateWalletTransaction({
-    wallet: walletBar, recipient: wallet.publicKey, amount: 15
-})
+// const walletBarAction = () => generateWalletTransaction({
+//     wallet: walletBar, recipient: wallet.publicKey, amount: 15
+// })
 
-for(let i=0; i<10; i++){
-    if(i%3 ===0){
-        walletAction();
-        walletFooAction();
-    }else if(i%3 === 1){
-        walletAction();
-        walletBarAction();
-    }else{
-        walletFooAction();
-        walletBarAction();
-    }
+// for(let i=0; i<10; i++){
+//     if(i%3 ===0){
+//         walletAction();
+//         walletFooAction();
+//     }else if(i%3 === 1){
+//         walletAction();
+//         walletBarAction();
+//     }else{
+//         walletFooAction();
+//         walletBarAction();
+//     }
 
-    transactionMiner.mineTransactions();
-}
+//     transactionMiner.mineTransactions();
+// }
 
 let PEER_PORT ;
 
